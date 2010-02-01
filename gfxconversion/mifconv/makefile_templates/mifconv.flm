@@ -1,0 +1,116 @@
+#
+# Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies). 
+# All rights reserved.
+# This component and the accompanying materials are made available
+# under the terms of "Eclipse Public License v1.0"
+# which accompanies this distribution, and is available
+# at the URL "http://www.eclipse.org/legal/epl-v10.html".
+#
+# Initial Contributors:
+# Nokia Corporation - initial contribution.
+#
+# Contributors:
+# 
+# Description:
+# 
+#
+
+# Check if $/ variable has been defined, if not, then it is always /
+ifeq ($(strip $(/)),)
+    /:=/
+endif
+
+# Replace \ with / in EPOCROOT
+EPOCROOT:=$(subst \,/,$(EPOCROOT))
+# Make sure that EPOCROOT ends in /
+EPOCROOT:=$(patsubst %/,%,$(EPOCROOT))/
+# Replace / with $/ in EPOCROOT
+EPOCROOT:=$(subst /,$/,$(EPOCROOT))
+
+# Important initialise
+RELEASEABLES:=
+
+ifeq ($(SBS_BUILD_DIR),)
+VECTORINTERMEDIATEDIR:=$(EPOCROOT)epoc32$/build$/s60$/icons$/$(notdir $(basename $(TARGETFILE)))
+else
+VECTORINTERMEDIATEDIR:=$(SBS_BUILD_DIR)$/s60$/icons$/$(notdir $(basename $(TARGETFILE)))
+endif
+
+include $(EPOCROOT)epoc32$/tools$/makefile_templates$/s60$/mifconv_global_options.make
+include $(EPOCROOT)epoc32$/tools$/makefile_templates$/s60$/mifconv_step1.make
+include $(EPOCROOT)epoc32$/tools$/makefile_templates$/s60$/mifconv_step2.make
+include $(EPOCROOT)epoc32$/tools$/makefile_templates$/s60$/mifconv_option_reader.make
+include $(EPOCROOT)epoc32$/tools$/makefile_templates$/s60$/mifconv_step3.make
+
+ifeq ($(OSTYPE),unix) 
+MIFCONV:=$(MIFCONV)
+SVGTBINENCODE:=$(SVGTBINENCODE)
+else 
+MIFCONV:=$(MIFCONV)$(DOTEXE)
+SVGTBINENCODE:=$(SVGTBINENCODE)$(DOTEXE)
+endif
+
+ifeq ($(strip $(MIFCONVDEBUG)),1)
+$(info <TOOLCAT toolcat='$(TOOLCAT)'/>)
+$(info <TOOLCOPY toolcopy='$(TOOLCOPY)'/>)
+$(info <TOOLMKDIR toolmkdir='$(TOOLMKDIR)'/>)
+$(info <MIFCONV mifconv='$(MIFCONV)'/>)
+endif
+
+ifeq ($(strip $(MIFCONVDEBUG)),1)
+$(warning MIFCONVOPTS $(MIFCONVOPTS))
+endif
+
+# The groupsvgin10 macro allows us to construct a command file, 10 
+# svgs/bmps objects at a time to avoid limits on argument lengths and 
+# sizes on Windows.
+define groupsvgin10
+	$(if $1,$(shell echo -e $(foreach L,$(wordlist 1,10,$1),"$(L)\\n") >>$(PARAMFILE)),)
+	$(if $1,$(call groupsvgin10,$(wordlist 11,$(words $1),$1)),true)
+endef
+
+define generatemif
+
+TARGET_$(TARGETFILE):=1
+MIFCONVOPTS:=$(MIFCONVOPTS)
+BITMAPS:=$(addsuffix .bmp,$(BITMAPBASESOURCES))
+
+BITMAP:: $(BITMAPFILE) $(TARGETFILE)
+
+ifeq ($(INIT_CFG),$(PLATFORM)$(CFG))
+ifneq ($(HEADERFILE),)
+$(HEADERFILE): $(TARGETFILE)
+endif
+endif
+
+ifneq ($(BITMAPFILE),)
+$(BITMAPFILE): $(TARGETFILE)
+endif
+
+
+$(if $(HEADERFILE),$(shell echo -e "-h$(HEADERFILE)\n-e\n" >$(PARAMFILE)), $(shell echo -e "-e\n" >$(PARAMFILE)) )
+$(if $(SOURCEDIR),$(shell echo -e "-i$(SOURCEDIR)\n" >>$(PARAMFILE)),)
+
+$(call groupsvgin10, $(MIFCONVOPTS))
+
+$(TARGETFILE): $(SVGBFILES) $(MIFCONV) $(SVGTBINENCODE) $(BMPFILES) $(MASKFILES)
+	$(call startrule,mifcompile,FORCESUCCESS) \
+	$(MIFCONV) $(TARGETFILE) -f$(PARAMFILE) \
+	$(call endrule,mifcompile)
+
+endef
+
+ifeq ($(TARGET_$(TARGETFILE)),)
+$(eval $(call generatemif))
+endif
+
+%-erase :
+	-$(GNURM) $*
+
+# FLM specific block begins
+CLEAN CLEANMAKEFILE :: $(addsuffix -erase,$(wildcard $(TARGETFILE) $(HEADERFILE) $(BITMAPFILE) $(PARAMFILE) $(patsubst %b,%,$(SVGBFILES)) $(SVGBFILES)))
+# FLM specific block ends
+
+# for the abld -what target 
+RELEASEABLES:=$(TARGETFILE) $(HEADERFILE) $(BITMAPFILE)
+$(eval $(call whatmacro,$(RELEASEABLES),WHATBITMAP))
