@@ -27,6 +27,8 @@ class MifConvUtil
 {
 public:
 
+    static int ByteWidth(int aPixelWidth,int aBitsPerPixel);
+    
     /**
      * Returns file extension of the given filename
      * @return String representing the file extension

@@ -25,6 +25,13 @@ class MifConvSourceFile
 {
 public:
 
+    enum TCompileInfo
+        {
+        EFormatNotImportant,
+        ENokiaBitmap,
+        EThirdPartyBitmap
+        };
+    
 	/**
 	 * Default constructor
 	 */
@@ -174,6 +181,9 @@ public:
      */
     IconDisplayMode MaskDisplayMode() const;
 
+    void SetCompileInfo(TCompileInfo aInfo);
+    void WriteCompileInfo(ostream& aOut);
+    
 protected:
  
     /**
@@ -203,6 +213,7 @@ protected:
     MifConvString iMaskFilename;
     char* iContent;
     unsigned int iContentLen;
+    TCompileInfo iInfo;
 };
 
 typedef std::vector<MifConvSourceFile> MifConvSourceFileList;

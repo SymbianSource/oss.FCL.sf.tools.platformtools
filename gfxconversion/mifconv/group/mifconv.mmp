@@ -35,4 +35,7 @@ SOURCE                      mifconv_iconbinaryconverter.cpp
 SOURCE                      mifconv_mifconverter.cpp
 SOURCE                      mifconv_sourcefile.cpp
 SOURCE                      mifconv_util.cpp
-
+SOURCE                      mifconv_mbmgenerator.cpp
+SOURCE                      mifconv_mbmgenerator_pbmcomp.cpp
+SOURCE                      mifconv_mbmgenerator_bmtopbm.cpp
+SOURCE                      mifconv_mbmgenerator_rgb.cpp

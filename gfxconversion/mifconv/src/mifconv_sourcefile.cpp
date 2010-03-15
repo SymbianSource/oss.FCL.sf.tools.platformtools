@@ -47,7 +47,8 @@ iMaskDisplayMode(src.iMaskDisplayMode),
 iAnimated( src.IsAnimated() ),
 iMaskFilename( src.iMaskFilename ),
 iContent(src.iContent),
-iContentLen(src.iContentLen)
+iContentLen(src.iContentLen),
+iInfo(EFormatNotImportant)
 {
 }
 
@@ -177,3 +178,16 @@ void MifConvSourceFile::SetDepthAndMask( const MifConvString& depthAndMask )
     iDepth = MifConvArgumentManager::Instance()->ConvertToDepth(iDepthString); 
 }
 
+void MifConvSourceFile::SetCompileInfo(TCompileInfo aInfo)
+    {
+    iInfo = aInfo;
+    }
+
+void MifConvSourceFile::WriteCompileInfo(ostream& aOut)
+    {
+    aOut << iFilename;
+    if (iInfo == ENokiaBitmap)
+        aOut << " (Nokia format)";
+    else if (iInfo == EThirdPartyBitmap)
+        aOut << " (Third party format)";
+    }

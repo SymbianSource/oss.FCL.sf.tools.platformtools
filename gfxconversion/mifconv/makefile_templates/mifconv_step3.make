@@ -132,7 +132,8 @@ endif
 
 
 ##########################################################################################
-# MBM file name resolution. BMCONV is called by mifconv.
+# MBM file name resolution. BMCONV is called by mifconv if -B is defined. Otherwise 
+# mifconv uses puilt-in logic for BMP to MBM -conversion.
 #
 
 # Check if we have any bitmap sources available

@@ -38,9 +38,9 @@ using namespace std;
 using namespace MifConvDefs;
 
 // Mifconv version
-static const MifConvString MifConvVersion("3.1.7");
-static const MifConvString MifConvDate("10th July 2009");
-static const MifConvString MifConvYears("2009");
+static const MifConvString MifConvVersion("3.2.0");
+static const MifConvString MifConvDate("24th February 2010");
+static const MifConvString MifConvYears("2010");
 
 // Mifconv return values:
 #define MIFCONV_ERROR       1

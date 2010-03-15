@@ -60,10 +60,23 @@ protected:
 	virtual void CleanupTempFiles();
 
     /**
-     * Runs external bmconv application, which builds the .mbm file.     
+     * Runs external bmconv application, which builds the .mbm file.
+     * @param bmconvPath location of bmconv
      */
-    void RunBmconv();
-
+    void RunExternalBmconv( const MifConvString& aBmconvPath );
+       
+    /**
+     * Check first from argument manager if palette name has been given.
+     * If not, use default palette file name.
+     */
+    const MifConvString MifConvBitmapConverter::GetPaletteFileName();
+    
+    /**
+     * Returns defaulta palette file name.
+     * @param aBuf used to return the reference constant.
+     */
+    const MifConvString& DefaultPaletteFileName(MifConvString& aBuf);
+    
     /**
      * Creates and initializes the temporary file.     
      */
@@ -74,18 +87,12 @@ protected:
      * @param stream file stream for temporary file
      * @param bmpFile Source file object representing the bitmap file.
      */
-    void AppendBmpToTempFile(fstream& stream, const MifConvSourceFile& bmpFile);
+    void AppendBmpToTempFile(fstream& aStream, const MifConvSourceFile& aBmpFile);
 
-    /**
-     * Returns the default path for the external bmconv executable.
-     * @return Default bmconv path.
-     */
-    const MifConvString& GetDefaultBmConvPath();
 private:
-    
+        
     MifConvString iTempDir;
     MifConvString iTempFilename;
-    MifConvString iDefaultBmConvPath;
     MifConvString iTargetFilename;
 };
 

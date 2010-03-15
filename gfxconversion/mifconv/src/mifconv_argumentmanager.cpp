@@ -835,7 +835,6 @@ const MifConvString& MifConvArgumentManager::StringValue( const MifConvString& a
 	{
 		return i->second.Value();
 	}
-	
 	return iDummyString;
 }
 
