@@ -42,6 +42,11 @@ MIFCONV:=$(EPOCROOT)epoc32$/tools$/mifconv
 VECTORSOURCEDIR:=$(EPOCROOT)epoc32$/s60$/icons
 BITMAPSOURCEDIR:=$(EPOCROOT)epoc32$/s60$/bitmaps
 
+# Optional SVG icon searching subdirectories:
+VECTORSOURCESUBDIR_NSS:=$(VECTORSOURCEDIR)$/nss
+VECTORSOURCESUBDIR_NOKIA:=$(VECTORSOURCEDIR)$/nokia
+VECTORSOURCESUBDIR_OEM:=$(VECTORSOURCEDIR)$/oem
+
 # Default target directories:
 WINS_TARGETDIR:=$(EPOCROOT)epoc32$/release$/wins$/$(CFG)$/z$/resource$/apps
 WINSCW_TARGETDIR:=$(EPOCROOT)epoc32$/release$/winscw$/$(CFG)$/z$/resource$/apps

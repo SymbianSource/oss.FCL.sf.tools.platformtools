@@ -1,7 +1,7 @@
 ===============================================================================
 
-RELEASE NOTES - MIFCONV v3.2.0
-RELEASED 24th February 2010 
+RELEASE NOTES - MIFCONV v3.2.1
+RELEASED 20th April 2010 
 
 SUPPORTS S60 3.2+
 
@@ -26,11 +26,9 @@ Main Features:
 
 ===============================================================================
 
-What's New in v3.2.0
+What's New in v3.2.1
 ====================
-- Change: Removed dependencies to BMCONV tool by adding the BMCONV encoding 
-  functionality as a part of MifConv functionality. External BMCONV tool can still 
-  be used by giving -B parameter.
+- Change: Added new default search directories for icon files.
 
 ===============================================================================
 
@@ -67,6 +65,12 @@ Known Issues:
 
 Version History:
 ================
+
+Version 3.2.0 - 24th February 2010
+====================
+- Change: Removed dependencies to BMCONV tool by adding the BMCONV encoding 
+  functionality as a part of MifConv functionality. External BMCONV tool can still 
+  be used by giving -B parameter.
 
 Version 3.1.7 - 10th July 2009
 ====================

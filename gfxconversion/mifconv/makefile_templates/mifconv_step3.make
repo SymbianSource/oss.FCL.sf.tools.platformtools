@@ -19,19 +19,45 @@
 # Get list of files
 #
 
-# First get SVG files from SOURCEDIR, then .bmp files from SOURCEDIR, then .svg from VECTORSOURCEDIR and finally .bmp from BITMAPSOURCEDIR
+# First get SVG files from SOURCEDIR, then .bmp files from SOURCEDIR, then .svg from VECTORSOURCEDIR, 
+# then .bmp from BITMAPSOURCEDIR and finally .svg from all VECTORSOURCESUBDIR's
 SOURCEPATHS:=$(foreach FILE, \
 					$(basename $(FILES)), \
-					$(firstword $(wildcard $(SOURCEDIR)$/$(FILE).svg $(SOURCEDIR)$/$(FILE).bmp $(VECTORSOURCEDIR)$/$(FILE).svg) $(BITMAPSOURCEDIR)$/$(FILE).bmp))
-
-# Get a full list of SVG files
+					$(firstword \
+					$(wildcard $(SOURCEDIR)$/$(FILE).svg $(SOURCEDIR)$/$(FILE).bmp $(VECTORSOURCEDIR)$/$(FILE).svg) \
+					$(wildcard $(VECTORSOURCESUBDIR_NSS)$/$(FILE).svg $(VECTORSOURCESUBDIR_NOKIA)$/$(FILE).svg $(VECTORSOURCESUBDIR_OEM)$/$(FILE).svg) \
+					$(BITMAPSOURCEDIR)$/$(FILE).bmp) \
+					)
+					
+# Get a list of SVG files including VECTORSOURCESUBDIRs
 SVGFILES:=$(filter %.svg,$(SOURCEPATHS))
-
-# Paths of SVGB files will be under the intermediate directory
-SVGBFILES:=$(addprefix $(VECTORINTERMEDIATEDIR)$/,$(notdir $(addsuffix b,$(SVGFILES))))
 
 # BMP files are all the other files
 BMPFILES:=$(filter-out $(SVGFILES),$(SOURCEPATHS))
+
+# Filter VECTORSOURCESUBDIRs content out from SVGFILES
+SVGFILES:=$(filter-out $(VECTORSOURCESUBDIR_NSS)%,$(SVGFILES))
+SVGFILES:=$(filter-out $(VECTORSOURCESUBDIR_NOKIA)%,$(SVGFILES))
+SVGFILES:=$(filter-out $(VECTORSOURCESUBDIR_OEM)%,$(SVGFILES))
+
+# Get SVG files from VECTORSOURCESUBDIRs
+SVGFILES_NSS:=$(foreach FILE, \
+					$(basename $(FILES)), \
+					$(wildcard $(VECTORSOURCESUBDIR_NSS)$/$(FILE).svg))
+
+SVGFILES_NOKIA:=$(foreach FILE, \
+					$(basename $(FILES)), \
+					$(wildcard $(VECTORSOURCESUBDIR_NOKIA)$/$(FILE).svg))
+
+SVGFILES_OEM:=$(foreach FILE, \
+					$(basename $(FILES)), \
+					$(wildcard $(VECTORSOURCESUBDIR_OEM)$/$(FILE).svg))
+
+# Paths of SVGB files will be under the intermediate directory
+SVGBFILES:=$(addprefix $(VECTORINTERMEDIATEDIR)$/,$(notdir $(addsuffix b,$(SVGFILES)))) \
+		   $(addprefix $(VECTORINTERMEDIATEDIR)$/,$(notdir $(addsuffix b,$(SVGFILES_NSS)))) \
+		   $(addprefix $(VECTORINTERMEDIATEDIR)$/,$(notdir $(addsuffix b,$(SVGFILES_NOKIA)))) \
+		   $(addprefix $(VECTORINTERMEDIATEDIR)$/,$(notdir $(addsuffix b,$(SVGFILES_OEM))))
 
 # Resolve mask files. Mask files are assumed to locate in the same folder than the actual bmp-file.
 MASKFILES:=$(foreach FILE, \
@@ -51,12 +77,12 @@ MASKFILES:=$(filter-out $(BMPFILES), $(MASKFILES))
 # If SOURCEDIR is defined, we need to create a rule for copying the vector files into the intermediate directory
 ifneq ($(strip $(SOURCEDIR)),)
 
-	# Create list of files
-	USERSVGFILES:=$(filter $(SOURCEDIR)%,$(SVGFILES))
-	USERBMPFILES:=$(filter $(SOURCEDIR)%,$(BMPFILES))
-	USERINTERMEDIATESVGFILES := $(subst $(SOURCEDIR), \
-										$(VECTORINTERMEDIATEDIR), \
-										$(USERSVGFILES) \
+# Create list of files
+USERSVGFILES:=$(filter $(SOURCEDIR)%,$(SVGFILES))
+USERBMPFILES:=$(filter $(SOURCEDIR)%,$(BMPFILES))
+USERINTERMEDIATESVGFILES := $(subst $(SOURCEDIR), \
+									$(VECTORINTERMEDIATEDIR), \
+									$(USERSVGFILES) \
 								)
 
 	# Now define the copy rule
@@ -72,13 +98,52 @@ endif
 
 # The same copy rule is needed for system files as well, first generate the lists
 SYSTEMSVGFILES:=$(filter $(VECTORSOURCEDIR)%,$(SVGFILES))
-SYSTEMBMPFILES:=$(filter $(BITMAPSOURCEDIR)%,$(BMPFILES))
 SYSTEMINTERMEDIATESVGFILES := $(subst $(VECTORSOURCEDIR), \
 									$(VECTORINTERMEDIATEDIR), \
 									$(SYSTEMSVGFILES) \
 								)
+SYSTEMINTERMEDIATESVGFILES_NSS:=$(subst $(VECTORSOURCESUBDIR_NSS), \
+									$(VECTORINTERMEDIATEDIR), \
+									$(SVGFILES_NSS) \
+								)
+SYSTEMINTERMEDIATESVGFILES_NOKIA:=$(subst $(VECTORSOURCESUBDIR_NOKIA), \
+									$(VECTORINTERMEDIATEDIR), \
+									$(SVGFILES_NOKIA) \
+								)
+SYSTEMINTERMEDIATESVGFILES_OEM:=$(subst $(VECTORSOURCESUBDIR_OEM), \
+									$(VECTORINTERMEDIATEDIR), \
+									$(SVGFILES_OEM) \
+								)
+SYSTEMBMPFILES:=$(filter $(BITMAPSOURCEDIR)%,$(BMPFILES))
 
-# And finally define the copy rule
+# Copy SVG files in reverse order of priority to enabele overriding SVG files with lesser priority
+
+# Define the copy rules for VECTORSOURCESUBDIRs
+ifeq ($(INIT_CFG),$(PLATFORM)$(CFG))
+$(SYSTEMINTERMEDIATESVGFILES_OEM) : $(VECTORINTERMEDIATEDIR)% : $(VECTORSOURCESUBDIR_OEM)% 
+	$(TOOLCOPY) $< $@	
+ifeq ($(OSTYPE),cygwin)
+	$(GNUCHMOD) a+rw "$@"
+endif
+endif
+
+ifeq ($(INIT_CFG),$(PLATFORM)$(CFG))
+$(SYSTEMINTERMEDIATESVGFILES_NOKIA) : $(VECTORINTERMEDIATEDIR)% : $(VECTORSOURCESUBDIR_NOKIA)% 
+	$(TOOLCOPY) $< $@	
+ifeq ($(OSTYPE),cygwin)
+	$(GNUCHMOD) a+rw "$@"
+endif
+endif
+
+ifeq ($(INIT_CFG),$(PLATFORM)$(CFG))
+$(SYSTEMINTERMEDIATESVGFILES_NSS) : $(VECTORINTERMEDIATEDIR)% : $(VECTORSOURCESUBDIR_NSS)% 
+	$(TOOLCOPY) $< $@	
+ifeq ($(OSTYPE),cygwin)
+	$(GNUCHMOD) a+rw "$@"
+endif
+endif
+
+# Define the copy rule for VECTORSOURCEDIR
 ifeq ($(INIT_CFG),$(PLATFORM)$(CFG))
 $(SYSTEMINTERMEDIATESVGFILES) : $(VECTORINTERMEDIATEDIR)% : $(VECTORSOURCEDIR)% 
 	$(TOOLCOPY) $< $@	
@@ -87,14 +152,18 @@ ifeq ($(OSTYPE),cygwin)
 endif
 endif
 
+
 # Get full list of intermediate files
-VECTORINTERMEDIATESOURCES := $(SYSTEMINTERMEDIATESVGFILES) $(USERINTERMEDIATESVGFILES)
+VECTORINTERMEDIATESOURCES := $(SYSTEMINTERMEDIATESVGFILES) $(SYSTEMINTERMEDIATESVGFILES_NSS) $(SYSTEMINTERMEDIATESVGFILES_NOKIA) $(SYSTEMINTERMEDIATESVGFILES_OEM) $(USERINTERMEDIATESVGFILES)
 
 
 
 # Debug prints for debugging purposes
 #$(warning SOURCEPATHS $(SOURCEPATHS))
 #$(warning SVGFILES $(SVGFILES))
+#$(warning SVGFILES_NSS $(SVGFILES_NSS))
+#$(warning SVGFILES_NOKIA $(SVGFILES_NOKIA))
+#$(warning SVGFILES_OEM $(SVGFILES_OEM))
 #$(warning SVGBFILES $(SVGBFILES))
 #$(warning BMPFILES $(BMPFILES))
 #$(warning USERSVGFILES $(USERSVGFILES))
@@ -103,6 +172,9 @@ VECTORINTERMEDIATESOURCES := $(SYSTEMINTERMEDIATESVGFILES) $(USERINTERMEDIATESVG
 #$(warning SYSTEMSVGFILES $(SYSTEMSVGFILES))
 #$(warning SYSTEMBMPFILES $(SYSTEMBMPFILES))
 #$(warning SYSTEMINTERMEDIATESVGFILES $(SYSTEMINTERMEDIATESVGFILES))
+#$(warning SYSTEMINTERMEDIATESVGFILES_NSS $(SYSTEMINTERMEDIATESVGFILES_NSS))
+#$(warning SYSTEMINTERMEDIATESVGFILES_NOKIA $(SYSTEMINTERMEDIATESVGFILES_NOKIA))
+#$(warning SYSTEMINTERMEDIATESVGFILES_OEM $(SYSTEMINTERMEDIATESVGFILES_OEM))
 #$(warning VECTORINTERMEDIATESOURCES $(VECTORINTERMEDIATESOURCES))
 
 

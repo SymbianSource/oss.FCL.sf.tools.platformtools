@@ -322,6 +322,12 @@ void MifConvArgumentManager::Init( const MifConvStringList& argList )
     iSearchRules.push_back(MifConvSourceSearchRule(MifConvString(epocRoot + S60_ICONS_PATH), vector<MifConvString>(1, SVG_FILE_EXTENSION)));
     // Global bitmaps folder can contain only .bmp files:
     iSearchRules.push_back(MifConvSourceSearchRule(MifConvString(epocRoot + S60_BITMAPS_PATH), vector<MifConvString>(1, BMP_FILE_EXTENSION)));
+    // If not found from global icons folder, try subfolder nss:
+    iSearchRules.push_back(MifConvSourceSearchRule(MifConvString(epocRoot + S60_ICONS_PATH + DIR_SEPARATOR + "nss"), vector<MifConvString>(1, SVG_FILE_EXTENSION)));
+    // If not found from nss sub folder, try subfolder nokia:
+    iSearchRules.push_back(MifConvSourceSearchRule(MifConvString(epocRoot + S60_ICONS_PATH + DIR_SEPARATOR + "nokia"), vector<MifConvString>(1, SVG_FILE_EXTENSION)));
+    // If not found from nokia sub folder, try subfolder oem:
+    iSearchRules.push_back(MifConvSourceSearchRule(MifConvString(epocRoot + S60_ICONS_PATH + DIR_SEPARATOR + "oem"), vector<MifConvString>(1, SVG_FILE_EXTENSION)));    
     // EPOCROOT, if given in environment variables:
     if( epocRoot.length() > 0 )
     {
@@ -659,7 +665,7 @@ const MifConvString& MifConvArgumentManager::EpocRoot() const
  *
  */
 bool MifConvArgumentManager::FindAndSetPathAndType( MifConvSourceFile& srcFile, const MifConvString& extension )
-{    
+{   
     // Search the filename first "as is":
     MifConvString tmp( MifConvUtil::FilenameWithoutExtension( srcFile.Filename() ) + MifConvString(FILE_EXTENSION_SEPARATOR) + extension );     
     if( MifConvUtil::FileExists(tmp) )
@@ -698,7 +704,7 @@ bool MifConvArgumentManager::FindAndSetPathAndType( MifConvSourceFile& srcFile, 
         if( validPath )
         {            
             MifConvString searchPath(i->SearchPath());
-
+                                  
             // Make sure that the last char is directory separator
             if( searchPath.length() > 0 && searchPath.at( searchPath.length()-1) != DIR_SEPARATOR2 )
             {
@@ -708,11 +714,12 @@ bool MifConvArgumentManager::FindAndSetPathAndType( MifConvSourceFile& srcFile, 
             searchPath += MifConvUtil::FilenameWithoutExtension( srcFile.Filename() ) + MifConvString(FILE_EXTENSION_SEPARATOR) + extension;
 
             MifConvUtil::RemoveDuplicateDirSeparators(searchPath);
-
+           
             if( MifConvUtil::FileExists( searchPath ) )
             {
                 srcFile.SetFilename(searchPath);
-                MifConvUtil::FindAndSetBitmapMaskFile(srcFile);                
+                MifConvUtil::FindAndSetBitmapMaskFile(srcFile);
+                                
                 return true; 
             }  
         }            

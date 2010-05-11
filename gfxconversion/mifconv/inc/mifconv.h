@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies). 
+* Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies). 
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -38,8 +38,8 @@ using namespace std;
 using namespace MifConvDefs;
 
 // Mifconv version
-static const MifConvString MifConvVersion("3.2.0");
-static const MifConvString MifConvDate("24th February 2010");
+static const MifConvString MifConvVersion("3.2.1");
+static const MifConvString MifConvDate("12th March 2010");
 static const MifConvString MifConvYears("2010");
 
 // Mifconv return values:
