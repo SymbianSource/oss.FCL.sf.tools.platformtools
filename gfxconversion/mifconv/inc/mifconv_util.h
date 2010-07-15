@@ -99,6 +99,15 @@ public:
      */
     static void ReplaceChar( MifConvString& str, char replaceFrom, char replaceTo);
 
+    /**
+     * Replaces given strings to other one from the given string.
+     * @param str String from which the characters will be replaced.
+     * @param replaceFrom This section of the str will be replaced by other one.
+     * @param replaceTo Characters will be replaced by this.
+     */
+    static void ReplaceStr( MifConvString& str, 
+                                  MifConvString replaceFrom, MifConvString replaceTo);
+    
     /** 
      * Tells whether the given character is a whitespace character or not.
      * @param c Charater to be investigated.

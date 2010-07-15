@@ -69,7 +69,7 @@ protected:
      * Check first from argument manager if palette name has been given.
      * If not, use default palette file name.
      */
-    const MifConvString MifConvBitmapConverter::GetPaletteFileName();
+    const MifConvString GetPaletteFileName();
     
     /**
      * Returns defaulta palette file name.

@@ -1,7 +1,7 @@
 ===============================================================================
 
-RELEASE NOTES - MIFCONV v3.2.1
-RELEASED 20th April 2010 
+RELEASE NOTES - MIFCONV v3.2.2
+RELEASED 28th April 2010 
 
 SUPPORTS S60 3.2+
 
@@ -26,9 +26,10 @@ Main Features:
 
 ===============================================================================
 
-What's New in v3.2.1
+What's New in v3.2.2
 ====================
-- Change: Added new default search directories for icon files.
+- Fix: Mifconv now support the marking ".\" in front of a filename in Linux.
+- Fix: Mifconv now compiles correctly in Linux.
 
 ===============================================================================
 
@@ -65,6 +66,10 @@ Known Issues:
 
 Version History:
 ================
+
+Version 3.2.1 - 20th April 2010
+====================
+- Change: Added new default search directories for icon files.
 
 Version 3.2.0 - 24th February 2010
 ====================

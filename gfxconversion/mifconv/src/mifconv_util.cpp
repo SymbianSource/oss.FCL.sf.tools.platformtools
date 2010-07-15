@@ -28,6 +28,7 @@
 #endif
 #include <stdlib.h>     // for _MAX_PATH
 #include <stdio.h>
+#include <cctype>
 
 #ifndef _MAX_PATH
 #define _MAX_PATH   (260)
@@ -185,6 +186,26 @@ void MifConvUtil::ReplaceChar( MifConvString& str, char replaceFrom, char replac
         while( (index = str.find(replaceFrom, index)) != MifConvString::npos )
         {     
             str.replace(index,1,1,replaceTo);
+        }
+    }
+}
+
+/**
+ *
+ */
+void MifConvUtil::ReplaceStr( MifConvString& str, 
+                              MifConvString replaceFrom, MifConvString replaceTo)
+{
+    if( str.length() >= replaceFrom.length() )
+    {        
+        MifConvString::size_type index = 0;
+        while( (index = str.find(replaceFrom, index)) != MifConvString::npos )
+        {     
+            MifConvString tmp_str = str.substr(0, index);
+            tmp_str = tmp_str + replaceTo;
+            str = tmp_str + str.substr(index+replaceFrom.length(),
+                                           str.length()-index+replaceFrom.length()
+                                           );
         }
     }
 }
