@@ -18,6 +18,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "../bmconv_s60/group/bld.inf"
+// Removed bmconv from builds #include "../bmconv_s60/group/bld.inf"
 #include "../mifconv/group/bld.inf"
 
