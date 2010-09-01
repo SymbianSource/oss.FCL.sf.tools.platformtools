@@ -14,11 +14,11 @@
 # Description: makefile_templates, actual build configuration export makefile
 # 
  
-MAKEFILE =      $(EPOCROOT)/sf/mw/platformtools/gfxconversion/mifconv/makefile_templates/config/export.mk
+MAKEFILE =      /sf/mw/platformtools/gfxconversion/mifconv/makefile_templates/config/export.mk
 $(call push,MAKEFILE_STACK,$(MAKEFILE)) 
 
  
-TEMPLATEMAKEFILES =	$(EPOCROOT)/sf/mw/platformtools/gfxconversion/mifconv/makefile_templates/*.*			$(EPOCROOT)/epoc32/tools/makefile_templates/s60/
+TEMPLATEMAKEFILES =	/sf/mw/platformtools/gfxconversion/mifconv/makefile_templates/*.*			/epoc32/tools/makefile_templates/s60/
 
 template_makefiles :: template_makefiles_config
          

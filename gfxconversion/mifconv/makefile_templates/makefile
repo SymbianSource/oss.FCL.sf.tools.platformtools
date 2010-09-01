@@ -15,7 +15,7 @@
 #
 
  
-MAKEFILE = $(EPOCROOT)/sf/mw/platformtools/gfxconversion/mifconv/makefile_templates/makefile
+MAKEFILE = /sf/mw/platformtools/gfxconversion/mifconv/makefile_templates/makefile
 
  
 # Place the first target as the default target which is executed from this level 
